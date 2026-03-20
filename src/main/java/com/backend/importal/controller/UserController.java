@@ -41,4 +41,14 @@ public class UserController {
         return userService.useOtp(email, otp);
     }
 
+    @PostMapping("/create-users")
+    public String createUsers() {
+        try {
+            return userService.createUsersFromApprovedCandidates();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error creating users!";
+        }
+    }
+
 }
