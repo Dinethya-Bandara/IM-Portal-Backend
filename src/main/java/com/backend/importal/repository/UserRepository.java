@@ -2,10 +2,23 @@ package com.backend.importal.repository;
 
 import com.backend.importal.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
-    boolean existsByEmail(String email);        // checks email exists
+    Optional<User> findByPersonalEmail(String personalEmail);
+    boolean existsByPersonalEmail(String personalEmail);
+
+
+    long count();
+
+    @Query("SELECT COUNT(u) FROM User u WHERE LOWER(u.role.masterRole.roleName) = 'student'")
+    long countStudents();
+
+    @Query("SELECT COUNT(u) FROM User u WHERE LOWER(u.role.masterRole.roleName) = 'lecturer'")
+    long countLecturers();
+
+    @Query("SELECT COUNT(u) FROM User u WHERE LOWER(u.role.masterRole.roleName) = 'junior staff'")
+    long countJuniorStaff();
 }

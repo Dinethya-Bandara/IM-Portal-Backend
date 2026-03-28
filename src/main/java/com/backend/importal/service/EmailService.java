@@ -12,29 +12,17 @@ import java.security.SecureRandom;
 @Service
 public class EmailService {
 
-//    public String generateOtp() {
-//        SecureRandom random = new SecureRandom();
-//        int otp = 100000 + random.nextInt(900000);
-//        return String.valueOf(otp);
-//    }
-//
-//
-//    // Send OTP email
-//    public String sendOtpEmail(String toEmail) {
-//
-//
-//        String otp = generateOtp();
-//
-//
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(toEmail);
-//        message.setSubject("Your OTP Code");
-//        message.setText(
-//                "Your One-Time Password (OTP) is: " + otp + "\n\n" +
-//                        "This OTP is valid for a limited time. Do not share it with anyone."
-//        );
-//
-//        mailSender.send(message);
-//        return otp;
-//    }
+    @Autowired
+    private JavaMailSender mailSender;
+
+    public void sendOtpEmail(String toEmail, String otp) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("IM Portal - OTP Verification");
+        message.setText("Your One-Time Password (OTP) is: \n\n" + otp + "\n\n" +
+                        "This OTP is valid for a limited time. Do not share it with anyone.");
+
+        mailSender.send(message);
+    }
 }

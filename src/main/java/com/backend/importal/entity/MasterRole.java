@@ -1,6 +1,5 @@
 package com.backend.importal.entity;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,25 +11,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "master_roles")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+public class MasterRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column (name = "role_name", unique = true)
+    @Column(name = "role_name", unique = true)
     private String roleName;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-    private List<User> users = new ArrayList<>();
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "master_role_Id", nullable = true)
-    private MasterRole masterRole;
+    @OneToMany(mappedBy = "masterRole", fetch = FetchType.LAZY)
+    private List<Role> role = new ArrayList<>();
 }

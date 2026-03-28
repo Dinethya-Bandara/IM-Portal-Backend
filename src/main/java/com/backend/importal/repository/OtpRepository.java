@@ -10,5 +10,5 @@ import java.util.Optional;
 
 public interface OtpRepository extends JpaRepository<Otp, Long> {
     List<Otp> findByEmailAndExpired(String email, boolean expired);
-    Otp findByEmailAndOtpCodeAndExpired(String email, String otpCode, boolean expired, Limit limit);
+    Optional<Otp> findTopByEmailOrderByGeneratedTimeDesc(String email);
 }

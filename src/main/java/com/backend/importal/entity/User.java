@@ -27,15 +27,19 @@ public class User {
     @Column
     private String batch;
 
-    @Column(unique = true)
-    private String email;
+    @Column(name = "university_email")
+    private String universityEmail;
+
+    @Column
+    private String personalEmail;
+
+    @Column
+    private String contactNumber;
 
     @Column
     private String password;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "roleId", nullable = false) // FK column in users table
+    @JoinColumn(name = "role_Id", nullable = false)
     private Role role;
-
-
 }
