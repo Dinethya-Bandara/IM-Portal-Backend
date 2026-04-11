@@ -6,8 +6,6 @@ import lombok.*;
 
 @Entity
 @Table(name = "modules")
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
