@@ -1,6 +1,5 @@
 package com.backend.importal.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,10 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponseDTO {
-    public boolean isSuccess;
-    public String name;
+public class NotificationRequestDTO {
+
+    public String title;
     public String message;
-    public String batch;
-    public String roleName;
+    public String targetAudience;
+    public String priority;
+    public String senderEmail;
 }
