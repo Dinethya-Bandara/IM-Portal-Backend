@@ -39,6 +39,9 @@ public class User {
     @Column
     private String password;
 
+    @Column(name = "profile_image")
+    private String profileImage;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_Id", nullable = false)
     private Role role;
