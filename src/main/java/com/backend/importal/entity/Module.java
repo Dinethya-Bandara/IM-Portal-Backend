@@ -18,4 +18,5 @@ public class Module {
     private String courseCode;
     private String moduleName;
     private String lecturerName;
+    private int credits;
 }
