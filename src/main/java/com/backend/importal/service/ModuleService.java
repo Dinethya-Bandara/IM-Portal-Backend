@@ -16,4 +16,8 @@ public class ModuleService {
     public List<Module> searchModules(String query) {
         return repository.searchModules(query);
     }
+
+    public List<Module> getAllModules() {
+        return repository.findAll();
+    }
 }
