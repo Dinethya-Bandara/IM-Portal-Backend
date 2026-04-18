@@ -19,4 +19,9 @@ public class ModuleController {
     public List<Module> search(@RequestParam String query) {
         return service.searchModules(query);
     }
+
+    @GetMapping
+    public List<Module> getAllModules() {
+        return service.getAllModules();
+    }
 }

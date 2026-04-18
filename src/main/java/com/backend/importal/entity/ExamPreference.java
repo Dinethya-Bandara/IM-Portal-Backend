@@ -3,25 +3,29 @@ package com.backend.importal.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
-@Table(name = "exam_preference")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ExamPreference {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long preferenceId;
+    private Long id;
 
-    @Column(nullable = false)
-    private String weekendAvailability;
+    private String studentEmail;
+    private String batch;
+    private int level;
 
-    @Column(nullable = false)
-    private Integer dayGaps;
+    private String gap;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private User user;
+    private boolean satAvailable;
+    private boolean sunAvailable;
+
+    @OneToMany(mappedBy = "examPreference", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ExamPreferenceItem> modules;
 }
