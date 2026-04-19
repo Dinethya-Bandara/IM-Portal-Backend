@@ -6,6 +6,8 @@ import com.backend.importal.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/profile")
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class ProfileController {
 
     @PutMapping
     public void updateProfile(@RequestParam String personalEmail,
-                              @RequestBody ProfileUpdateDTO dto) {
+                              @RequestBody ProfileUpdateDTO dto) throws IOException {
         profileService.updateProfile(personalEmail, dto);
     }
 }
