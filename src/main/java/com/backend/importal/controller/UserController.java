@@ -42,17 +42,8 @@ public class UserController {
     }
 
     @PostMapping("/useOtp")
-    public ResponseEntity<String> useOtpCode(
-            @RequestParam String email,
-            @RequestParam String otp){
-
-        String result = userService.useOtp(email, otp);
-
-        if(result.equals("OTP Accepted!")){
-            return ResponseEntity.ok(result);
-        } else {
-            return ResponseEntity.badRequest().body(result);
-        }
+    public String useOtpCode(@RequestBody LoginRequestDTO otpRequest){
+        return userService.useOtp(otpRequest.getEmail(), otpRequest.getOtp());
     }
 
     @PostMapping("/resend-otp")
