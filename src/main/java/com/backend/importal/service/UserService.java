@@ -55,13 +55,13 @@ public class UserService {
             String decryptedPassword = EncryptUtil.decrypt(user.getPassword());
 
             if (decryptedPassword.equals(loginRequestDTO.password)) {
-                return new LoginResponseDTO(true, user.getName(), "Login Success!", user.getBatch(), user.getRole().getRoleName());
+                return new LoginResponseDTO(true, user.getName(), "Login Success!", user.getBatch(), user.getRole().getRoleName(), user.getLevel());
             } else {
-                return new LoginResponseDTO(false, null, "Incorrect Password", null, null);
+                return new LoginResponseDTO(false, null, "Incorrect Password", null, null, null);
             }
 
         } else {
-            return new LoginResponseDTO(false, null, "User not found", null, null);
+            return new LoginResponseDTO(false, null, "User not found", null, null, null);
         }
     }
 
