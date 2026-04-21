@@ -14,4 +14,5 @@ public class LoginResponseDTO {
     public String message;
     public String batch;
     public String roleName;
+    public String level;
 }
