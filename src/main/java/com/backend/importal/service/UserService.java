@@ -50,13 +50,16 @@ public class UserService {
 
     public LoginResponseDTO authenticateUser(LoginRequestDTO loginRequestDTO) throws Exception {
 
+        // Find user by email
         Optional<User> optionalUser = userRepository.findByPersonalEmail(loginRequestDTO.email);
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
 
+            // Decrypt stored password
             String decryptedPassword = EncryptUtil.decrypt(user.getPassword());
 
+            // Compare passwords
             if (decryptedPassword.equals(loginRequestDTO.password)) {
                 return new LoginResponseDTO(true, user.getName(), "Login Success!", user.getBatch(), user.getRole().getRoleName(), user.getLevel());
             } else {
@@ -68,8 +71,10 @@ public class UserService {
         }
     }
 
+    //Generate OTP and send to email
     public String generateOtp(String email) {
 
+        // Check if user exists
         Optional<User> userEmail = userRepository.findByPersonalEmail(email);
 
         if(userEmail.isEmpty()){
@@ -80,6 +85,7 @@ public class UserService {
         int otp = 100000 + random.nextInt(900000);
         String otpCode = String.valueOf(otp);
 
+        // Expire previous OTPs
         List<Otp> activeOtps = otpRepository.findByEmailAndExpired(email, false);
         if (!activeOtps.isEmpty()) {
             activeOtps.forEach(oldOtp -> oldOtp.setExpired(true));
@@ -99,6 +105,7 @@ public class UserService {
 
     }
 
+    //Verify OTP entered by user
     public String useOtp(String email, String enteredOtp) {
 
         Optional<Otp> otpOptional =
@@ -110,10 +117,12 @@ public class UserService {
 
         Otp currentOtp = otpOptional.get();
 
+        // Check if already used
         if (currentOtp.isExpired()) {
             return "OTP already used!";
         }
 
+        // Check expiry time (5 minutes)
         if (currentOtp.getGeneratedTime().plusMinutes(5).isBefore(LocalDateTime.now())) {
 
             currentOtp.setExpired(true);
@@ -126,12 +135,14 @@ public class UserService {
             return "Incorrect OTP!";
         }
 
+        // Mark as used
         currentOtp.setExpired(true);
         otpRepository.save(currentOtp);
 
         return "OTP Accepted!";
     }
 
+    //Create user accounts from approved candidates
     public String createUsersFromApprovedCandidates() throws Exception {
 
         List<Candidate> candidates =
@@ -171,6 +182,7 @@ public class UserService {
         }
         userRepository.saveAll(userList);
 
+        // Mark candidates as account created
         for(Candidate c : candidates){
             c.setAccountCreated(true);
         }
@@ -188,12 +200,13 @@ public class UserService {
         User user = userOptional.get();
 
         try {
-
+            // Encrypt new password
             String encryptedPassword = encrypt(newPassword);
             user.setPassword(encryptedPassword);
             userRepository.save(user);
 
         } catch (Exception e) {
+            // Log error
             errorLogService.logError(e, "UserService", "resetPassword");
             e.printStackTrace();
             return "Error while encrypting password";
@@ -202,6 +215,7 @@ public class UserService {
         return "Password updated successfully";
     }
 
+    //Get user statistics
     public UserStatsDTO getUserStats() {
         long total = userRepository.count();
         long students = userRepository.countStudents();
@@ -211,6 +225,7 @@ public class UserService {
         return new UserStatsDTO(total, students, lecturers, juniorStaff);
     }
 
+    //Get current academic start year
     public int getCurrentAcademicStartYear() {
         LocalDate now = LocalDate.now();
         int year = now.getYear();
@@ -221,6 +236,7 @@ public class UserService {
         return year;
     }
 
+    //Get student active/inactive status
     public UserStatusDTO getStudentStatus() {
 
         List<User> users = userRepository.findAll();

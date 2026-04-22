@@ -20,6 +20,7 @@ public class TimetableController {
     @Autowired
     private TimetableService timetableService;
 
+    //Add a new timetable entry
     @PostMapping
     public ResponseEntity<?> addTimetable(@Valid @RequestBody TimetableRequestDTO request) {
         try {
@@ -33,12 +34,14 @@ public class TimetableController {
         }
     }
 
+    //Delete a timetable entry by ID
     @DeleteMapping("/{id}")
     public String deleteTimetable(@PathVariable Long id) {
         timetableService.deleteTimetable(id);
         return "Deleted successfully";
     }
 
+    //Get timetable based on batch and type
     @GetMapping
     public List<TimetableResponseDTO> getTimetable(
             @RequestParam Long batchId,

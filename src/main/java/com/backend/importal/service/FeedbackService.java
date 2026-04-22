@@ -20,6 +20,7 @@ public class FeedbackService {
 
     private final FeedbackReadStatusRepository readRepo;
 
+    //Submit new feedback
     public Feedback submitFeedback(String message, String username) {
         Feedback feedback = Feedback.builder()
                 .message(message)
@@ -27,9 +28,11 @@ public class FeedbackService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
+        // Save feedback to database
         return repository.save(feedback);
     }
 
+    //Get all feedbacks (for admin/lecturer)
     public List<Feedback> getAllFeedbacks() {
         return repository.findAll();
     }
@@ -50,16 +53,19 @@ public class FeedbackService {
         return repository.save(feedback);
     }
 
+    // Get all feedbacks with read/unread status for a specific user
     public List<Map<String, Object>> getAllFeedbacksWithReadStatus(String username) {
 
         List<Feedback> feedbacks = repository.findAll();
 
         return feedbacks.stream().map(fb -> {
+            // Check if this feedback is read by this user
             boolean isRead = readRepo
                     .findByFeedbackIdAndUsername(fb.getId(), username)
                     .map(FeedbackReadStatus::isRead)
                     .orElse(false);
 
+            // Create a response object (Map)
             Map<String, Object> map = new HashMap<>();
             map.put("id", fb.getId());
             map.put("message", fb.getMessage());
@@ -70,19 +76,22 @@ public class FeedbackService {
         }).toList();
     }
 
+    //Mark a feedback as read for a specific user
     public void markAsRead(Long feedbackId, String username) {
 
+        // Check if a record already exists
         FeedbackReadStatus status = readRepo
                 .findByFeedbackIdAndUsername(feedbackId, username)
                 .orElse(null);
 
+        // If not exist, create new record
         if (status == null) {
             status = new FeedbackReadStatus();
             status.setFeedbackId(feedbackId);
             status.setUsername(username);
         }
 
-        status.setRead(true);
-        readRepo.save(status);
+        status.setRead(true); // Mark as read
+        readRepo.save(status); // Save to database
     }
 }
