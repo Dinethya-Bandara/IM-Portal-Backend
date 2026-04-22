@@ -28,6 +28,9 @@ import java.util.List;
         @Autowired
         private TimetableRepository timetableRepository;
 
+        @Autowired
+        private ErrorLogService errorLogService;
+
         public TimetableResponseDTO addTimetable(TimetableRequestDTO request) {
 
             Batch batch = batchRepository.findById(request.getBatchId())
@@ -54,6 +57,7 @@ import java.util.List;
             try {
                 timetableType = TimetableType.valueOf(request.getTimetableType().toUpperCase());
             } catch (Exception e) {
+                errorLogService.logError(e, "TimetableService", "addTimetable");
                 throw new RuntimeException("Invalid timetable type");
             }
 
@@ -68,6 +72,7 @@ import java.util.List;
                 try {
                     lectureType = LectureType.valueOf(request.getLectureType().toUpperCase());
                 } catch (Exception e) {
+                    errorLogService.logError(e, "TimetableService", "addTimetable");
                     throw new RuntimeException("Invalid lecture type");
                 }
             }
@@ -178,6 +183,7 @@ import java.util.List;
         try {
             timetableType = TimetableType.valueOf(type.toUpperCase());
         } catch (Exception e) {
+            errorLogService.logError(e, "TimetableService", "getByBatchAndType");
             throw new RuntimeException("Invalid timetable type");
         }
 

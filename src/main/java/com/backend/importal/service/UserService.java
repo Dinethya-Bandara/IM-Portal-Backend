@@ -45,6 +45,9 @@ public class UserService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private ErrorLogService errorLogService;
+
     public LoginResponseDTO authenticateUser(LoginRequestDTO loginRequestDTO) throws Exception {
 
         Optional<User> optionalUser = userRepository.findByPersonalEmail(loginRequestDTO.email);
@@ -165,12 +168,6 @@ public class UserService {
             user.setRole(c.getRole());
 
             userList.add(user);
-
-            //userRepository.save(user);
-
-            // Mark candidate as processed
-//            c.setAccountCreated(true);
-//            candidateRepository.save(c);
         }
         userRepository.saveAll(userList);
 
@@ -197,6 +194,7 @@ public class UserService {
             userRepository.save(user);
 
         } catch (Exception e) {
+            errorLogService.logError(e, "UserService", "resetPassword");
             e.printStackTrace();
             return "Error while encrypting password";
         }
@@ -244,6 +242,7 @@ public class UserService {
                     try {
                         return Integer.parseInt(user.getBatch().split("/")[0]);
                     } catch (Exception e) {
+                        errorLogService.logError(e, "UserService", "getStudentStatus");
                         return 0;
                     }
                 })
@@ -258,6 +257,7 @@ public class UserService {
                         int startYear = Integer.parseInt(user.getBatch().split("/")[0]);
                         return startYear >= minActiveYear;
                     } catch (Exception e) {
+                        errorLogService.logError(e, "UserService", "getStudentStatus");
                         return false;
                     }
                 })
@@ -269,6 +269,7 @@ public class UserService {
                         int startYear = Integer.parseInt(user.getBatch().split("/")[0]);
                         return startYear < minActiveYear;
                     } catch (Exception e) {
+                        errorLogService.logError(e, "UserService", "getStudentStatus");
                         return false;
                     }
                 })
