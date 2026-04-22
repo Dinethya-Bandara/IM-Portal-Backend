@@ -16,11 +16,13 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
+    //Get user profile details
     @GetMapping
     public ProfileResponseDTO getProfile(@RequestParam String personalEmail) {
         return profileService.getProfile(personalEmail);
     }
 
+    //Update user profile details
     @PutMapping
     public void updateProfile(@RequestParam String personalEmail,
                               @RequestBody ProfileUpdateDTO dto) throws IOException {

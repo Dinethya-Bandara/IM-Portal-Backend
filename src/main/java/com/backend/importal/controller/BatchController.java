@@ -15,6 +15,7 @@ public class BatchController {
     @Autowired
     private BatchRepository batchRepository;
 
+    //Get all batches through batch repository
     @GetMapping
     public List<Batch> getAllBatches() {
         return batchRepository.findAll();

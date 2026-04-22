@@ -31,3 +31,9 @@ public class ErrorLogService {
         errorLogRepository.save(errorLog);
     }
 }
+
+/*
+ This method logs errors into the database when an exception occurs. It takes the error, class name,
+ and method name, converts the full stack trace into a string, and stores it along with the error
+ message and timestamp. This helps in tracking and debugging issues later instead of only using console logs.
+*/

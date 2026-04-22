@@ -31,13 +31,16 @@ import java.util.List;
         @Autowired
         private ErrorLogService errorLogService;
 
+        //Add a new timetable entry (Academic or Exam)
         public TimetableResponseDTO addTimetable(TimetableRequestDTO request) {
 
+            // Get batch from DB
             Batch batch = batchRepository.findById(request.getBatchId())
                     .orElseThrow(() -> new RuntimeException("Batch not found"));
 
             Module module = null;
 
+            // If not a lunch break, module must exist
             if (!Boolean.TRUE.equals(request.getIsLunchBreak())) {
 
                 if (request.getCourseCode() == null || request.getCourseCode().isBlank()) {
@@ -46,12 +49,14 @@ import java.util.List;
                     );
                 }
 
+                // Find module by course code
                 module = moduleRepository.findByCourseCode(request.getCourseCode().trim())
                         .orElseThrow(() -> new ResponseStatusException(
                                 HttpStatus.BAD_REQUEST, "Module not found"
                         ));
             }
 
+            // Convert timetable type string → ENUM
             TimetableType timetableType;
 
             try {
@@ -63,6 +68,7 @@ import java.util.List;
 
             LectureType lectureType = null;
 
+            // Check if venue already booked
             if (timetableType == TimetableType.ACADEMIC && !Boolean.TRUE.equals(request.getIsLunchBreak())) {
 
                 if (request.getLectureType() == null) {
@@ -105,6 +111,7 @@ import java.util.List;
 
             String day;
 
+            // Determine day based on timetable type
             if (timetableType == TimetableType.EXAM) {
 
                 if (request.getDate() == null) {
@@ -122,6 +129,7 @@ import java.util.List;
                 day = request.getDay();
             }
 
+            // Create timetable entity using builder pattern
             Timetable timetable = Timetable.builder()
                     .batch(batch)
                     .module(module)
@@ -137,11 +145,14 @@ import java.util.List;
                     .createdAt(LocalDateTime.now())
                     .build();
 
+            // Save to database
             Timetable saved = timetableRepository.save(timetable);
 
+            // Convert entity → DTO
             return mapToResponse(saved);
         }
 
+        //Convert Timetable entity to response DTO
         private TimetableResponseDTO mapToResponse(Timetable t) {
             return TimetableResponseDTO.builder()
                     .id(t.getId())
@@ -162,10 +173,12 @@ import java.util.List;
                     .build();
         }
 
+        //Delete timetable entry by ID
         public void deleteTimetable(Long id) {
             timetableRepository.deleteById(id);
         }
 
+        //Get timetable by type (ACADEMIC / EXAM)
         public List<TimetableResponseDTO> getByType(String type) {
 
             TimetableType timetableType = TimetableType.valueOf(type.toUpperCase());
@@ -176,26 +189,27 @@ import java.util.List;
                     .toList();
         }
 
-    public List<TimetableResponseDTO> getByBatchAndType(Long batchId, String type) {
+        //Get timetable by batch and type
+        public List<TimetableResponseDTO> getByBatchAndType(Long batchId, String type) {
 
-        TimetableType timetableType;
+            TimetableType timetableType;
 
-        try {
-            timetableType = TimetableType.valueOf(type.toUpperCase());
-        } catch (Exception e) {
-            errorLogService.logError(e, "TimetableService", "getByBatchAndType");
-            throw new RuntimeException("Invalid timetable type");
+            try {
+                timetableType = TimetableType.valueOf(type.toUpperCase());
+            } catch (Exception e) {
+                errorLogService.logError(e, "TimetableService", "getByBatchAndType");
+                throw new RuntimeException("Invalid timetable type");
+            }
+
+            Batch batch = batchRepository.findById(batchId)
+                    .orElseThrow(() -> new RuntimeException("Batch not found"));
+
+            return timetableRepository
+                    .findByBatchAndTimetableType(batch, timetableType)
+                    .stream()
+                    .map(this::mapToResponse)
+                    .toList();
         }
-
-        Batch batch = batchRepository.findById(batchId)
-                .orElseThrow(() -> new RuntimeException("Batch not found"));
-
-        return timetableRepository
-                .findByBatchAndTimetableType(batch, timetableType)
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
-    }
     }
 
 
